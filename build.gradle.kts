@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation("com.github.librepdf:openpdf:1.3.30")
 }
 
 tasks.test {
