@@ -46,5 +46,5 @@ fun main() {
 //    println("\n===== 6. 자료구조 (Stack, Queue, PQ) =====")
 //    testDataStructures()
 
-    GeneratorPdf().ge1()
+    GeneratorPdf().자기소개서()
 }
