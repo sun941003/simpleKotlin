@@ -47,4 +47,19 @@ fun main() {
 //    testDataStructures()
 
     GeneratorPdf().자기소개서()
+// 실행 확인을 위한 테스트 코드입니다.
+    println("1. 문자열 가공: ${Solution().formatStrangeString("try hello world")}")
+    println("2. 배열 필터링: ${Solution().getDivisibleArray(intArrayOf(5, 9, 7, 10), 5).contentToString()}")
+    println("3. 정렬 응용: ${Solution().makeLargestNumber(intArrayOf(3, 30, 34, 5, 9))}")
+    println("4. 수학(GCD/LCM): ${Solution().getGcdAndLcm(3, 12).contentToString()}")
+    println("5. 해시(완주): ${Solution().findDropout(arrayOf("leo", "kiki", "eden"), arrayOf("eden", "kiki"))}")
+    println("6. 스택(괄호): ${Solution().isValidParentheses("(())()")}")
+    println("7. 내적(reduce): ${Solution().calculateDotProduct(intArrayOf(1, 2, 3, 4), intArrayOf(-3, -1, 0, 2))}")
+    println("8. 범위 합계: ${Solution().sumBetweenTwoNumbers(3, 5)}")
+    println("9. 진법 변환: ${Solution().reverseTernary(45)}")
+    println("10. 시저 암호: ${Solution().caesarCipher("AB", 1)}")
+
+    // 11번 요청 항목 테스트
+    val result11 = Solution().sortPaddedDigits(52) // 4자리가 아닌 경우 0052로 취급
+    println("11. 숫자 패딩 정렬: 오름차순=${result11.first}, 내림차순=${result11.second}")
 }
