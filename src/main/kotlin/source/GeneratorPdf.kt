@@ -10,6 +10,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 import java.nio.channels.Channels
+import com.lowagie.text.*
+import com.lowagie.text.pdf.draw.LineSeparator
+import java.awt.Color
 
 class GeneratorPdf {
     fun generate() {
@@ -386,4 +389,228 @@ class GeneratorPdf {
             document.close()
         }
     }
+    fun 이력서_자기소개서_통합() {
+        val fileName = "문창선_이력서_자기소개서.pdf"
+        // 여백 설정
+        val document = Document(PageSize.A4, 50f, 50f, 50f, 50f)
+
+        try {
+            PdfWriter.getInstance(document, FileOutputStream(fileName))
+            document.open()
+
+            // ---------------------------------------------------------
+            // 1. 폰트 설정 (나눔고딕)
+            // ---------------------------------------------------------
+            val fontPath = "NanumGothic.ttf"
+            val fontFile = File(fontPath)
+            if (!fontFile.exists()) {
+                println("폰트 다운로드 중...")
+                val website = URL("https://github.com/google/fonts/raw/main/ofl/nanumgothic/NanumGothic-Regular.ttf")
+                val rbc = Channels.newChannel(website.openStream())
+                val fos = FileOutputStream(fontPath)
+                fos.channel.transferFrom(rbc, 0, Long.MAX_VALUE)
+                fos.close()
+            }
+            val baseFont = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED)
+
+            // 스타일 정의
+            val titleFont = Font(baseFont, 22f, Font.BOLD)
+            val subTitleFont = Font(baseFont, 16f, Font.BOLD)
+            val companyFont = Font(baseFont, 14f, Font.BOLD)
+            val periodFont = Font(baseFont, 10f, Font.ITALIC, Color.GRAY)
+            val bodyFont = Font(baseFont, 10f, Font.NORMAL)
+            val bodyBoldFont = Font(baseFont, 10f, Font.BOLD)
+
+            // ---------------------------------------------------------
+            // 2. 이력서 (Resume) - 업데이트된 정보 반영
+            // ---------------------------------------------------------
+
+            // [헤더]
+            val name = Paragraph("문창선", titleFont)
+            name.alignment = Element.ALIGN_LEFT
+            document.add(name)
+
+            // 경력 5년 2개월로 업데이트
+            val contact = Paragraph("Android Developer (경력 5년 2개월) | Email: mchangsun@gmail.com", bodyFont)
+            contact.spacingAfter = 20f
+            document.add(contact)
+
+            document.add(LineSeparator())
+            document.add(Paragraph(" ", bodyFont))
+
+            // [1. Profile Summary]
+            addSectionTitle(document, "1. Profile Summary", subTitleFont)
+            val profiles = listOf(
+                "\"기본에 충실하며 팀과 함께 성장하는 안드로이드 개발자\"",
+                "• 5년 차 안드로이드 개발자: SI부터 인하우스 핀테크 서비스까지 다양한 도메인을 경험하며, 비즈니스 요구사항을 유연하게 구현",
+                "• 구조 개선 및 리팩토링: Koin→Hilt 마이그레이션, MVVM 및 클린 아키텍처 도입으로 유지보수성 향상",
+                "• 보안 및 최적화: 금융 앱 보안 취약점 100% 대응 및 UX 개선을 통한 이탈률 방어 경험 보유"
+            )
+            addBulletedList(document, profiles, bodyFont)
+
+            // [2. Tech Stack]
+            addSectionTitle(document, "2. Tech Stack", subTitleFont)
+            val techStack = listOf(
+                "Languages: Kotlin, Java",
+                "Architecture: MVVM, Clean Architecture",
+                "Libraries: Hilt, Koin, Retrofit, OkHttp, Jetpack Components",
+                "Tools: Android Studio, Git, Zeplin, Figma, Slack"
+            )
+            addBulletedList(document, techStack, bodyFont)
+
+            // [3. Work Experience]
+            addSectionTitle(document, "3. Work Experience", subTitleFont)
+
+            // --- 회사 1: 크로스이엔에프 (기간 업데이트: 3년 10개월) ---
+            addCompanyHeader(document, "주식회사 크로스이엔에프 (해외송금 핀테크)", "2022.04 - 현재 (3년 10개월) | Android Developer", companyFont, periodFont)
+
+            addProjectTitle(document, "① 앱 아키텍처 고도화 및 리팩토링", bodyBoldFont)
+            addBulletedList(document, listOf(
+                "DI 라이브러리 마이그레이션 (Koin → Hilt): 런타임 안정성 확보 및 컴파일 타임 검증 도입으로 런타임 에러 Zero화 기여",
+                "클린 아키텍처 도입 및 모듈화: 비즈니스 로직과 UI 레이어 분리, 기능별 모듈화로 결합도 감소"
+            ), bodyFont)
+
+            addProjectTitle(document, "② 금융 서비스 보안 및 안정성 강화", bodyBoldFont)
+            addBulletedList(document, listOf(
+                "보안 취약점 점검 대응 (2023, 2025): 금융보안원 및 외부 솔루션 점검 리포트 분석 및 조치. 모든 취약점 항목 100% 방어 완료",
+                "해외송금 환율 에러 플로우 개선: 환율 변동 에러 발생 시 재진행 유도 팝업 구현으로 사용자 이탈 방지"
+            ), bodyFont)
+
+            addProjectTitle(document, "③ 핀테크 핵심 기능 신규 개발", bodyBoldFont)
+            addBulletedList(document, listOf(
+                "주요 기능: 해외/국내 송금, 오픈뱅킹, 선불 충전, 결제 프로세스 전담 개발",
+                "국내 전용 서비스(월렛): 국내 체류 외국인용 월렛 및 카드 발급 프로세스 A to Z 구현"
+            ), bodyFont)
+
+            document.add(Paragraph(" ", bodyFont))
+
+            // --- 회사 2: 메이크잇 ---
+            addCompanyHeader(document, "메이크잇 (SI 스타트업)", "2020.12 - 2022.04 (1년 5개월) | Android Developer", companyFont, periodFont)
+
+            addProjectTitle(document, "① 헬스케어 서비스 앱 개발", bodyBoldFont)
+            addBulletedList(document, listOf(
+                "고객사 전용 SDK 분석 및 연동: 건강 데이터(걸음 수, 심박수) 동기화 및 푸시 알림 로직 구현",
+                "복잡한 API 명세 및 추가 요구사항을 납기 내 100% 구현 완료"
+            ), bodyFont)
+
+            addProjectTitle(document, "② 청소 업체 O2O 앱 (사용자/직원용)", bodyBoldFont)
+            addBulletedList(document, listOf(
+                "다양한 디바이스 해상도 대응을 위한 동적 이미지 리사이징 구현",
+                "직관적인 서비스 상태 확인을 위한 Custom Progress Bar 제작 및 UI/UX 커스터마이징"
+            ), bodyFont)
+
+            // [4. Education & Awards]
+            addSectionTitle(document, "4. Education & Awards", subTitleFont)
+            addBulletedList(document, listOf(
+                "백석대학교 소프트웨어과 졸업 (2019.03 - 2021.02)",
+                "2020 창업발명공모전 단체상 수상 (장애우 학교 정보 앱 기획)",
+                "백석문화대 졸업 전시전 우수상 (안드로이드 동화책 앱 개발)"
+            ), bodyFont)
+
+
+            // ---------------------------------------------------------
+            // 3. 자기소개서 (Cover Letter) - 7개 항목 버전
+            // ---------------------------------------------------------
+            document.newPage()
+
+            val coverTitle = Paragraph("자기소개서", titleFont)
+            coverTitle.alignment = Element.ALIGN_CENTER
+            coverTitle.spacingAfter = 30f
+            document.add(coverTitle)
+
+            // Q1~Q7 (업데이트된 Q4 포함)
+            val qnaList = listOf(
+                Pair("Q1. 개인적 성장 경험",
+                    "\"기능 구현을 넘어, '좋은 코드'의 가치를 깨닫다\"\n" +
+                            "학부 시절에는 '동작하는 앱'에 만족했으나, 실무에서 레거시 코드로 인한 유지보수의 어려움을 겪으며 코드 품질의 중요성을 깨달았습니다. 이후 핀테크 스타트업에서 Koin을 Hilt로 마이그레이션하고 클린 아키텍처를 도입하며, '나'뿐만 아니라 '미래의 동료'를 위한 코드를 작성하는 개발자로 성장했습니다."),
+
+                Pair("Q2. 인간관계 경험",
+                    "\"기술 용어가 아닌, 상대방의 언어로 소통하기\"\n" +
+                            "마케팅 팀의 유입 경로 분석 요청 시, 기술적 제약보다 '이벤트별 가입 전환율'이라는 니즈를 먼저 파악하여 가입 경로 선택 페이지를 역제안했습니다. 상대방의 목표를 기술로 실현해 줄 때 진정한 협업이 이루어짐을 배웠습니다."),
+
+                Pair("Q3. 의미 있는 프로젝트나 활동",
+                    "\"보안과 안정성, 두 마리 토끼를 잡은 핀테크 앱 고도화\"\n" +
+                            "최근 3년 9개월간 2회에 걸친 보안 취약점 점검을 100% 방어하며 서비스 안전성을 확보했습니다. 동시에 레거시 코드를 모듈화하고 클린 아키텍처를 적용하여, 보안성은 높이되 신규 개발 속도는 저해하지 않는 유연한 구조를 완성했습니다."),
+
+                Pair("Q4. 문제 해결 경험",
+                    "\"에러 메시지를 넘어선 능동적 가이딩: 로그인/회원가입 이탈률 방어\"\n" +
+                            "유저들이 이미 가입된 상태에서 재가입을 시도하다 에러만 보고 이탈하는 문제를 발견했습니다. 이에 에러 토스트 대신, '이미 가입된 계정입니다' 알림 후 즉시 로그인 화면으로 이동시키는 능동적 가이딩을 적용했습니다. 그 결과 유저의 혼란을 줄이고 가입 및 로그인 성공률을 반등시켰습니다."),
+
+                Pair("Q5. 직접 만들거나 실행해본 경험",
+                    "\"국내 체류 외국인을 위한 월렛 서비스 A to Z 개발\"\n" +
+                            "기획부터 참여하여 월렛 UI 설계, 실물 카드 발급, 결제 프로세스 연동까지 전 과정을 주도했습니다. 외부 업체와의 복잡한 API 연동과 예외 처리를 직접 해결하며, 비즈니스 모델이 실제 서비스로 런칭되는 전체 사이클을 경험했습니다."),
+
+                Pair("Q6. 효율성 개선 경험",
+                    "\"런타임 에러 Zero에 도전: DI 마이그레이션\"\n" +
+                            "Koin의 런타임 에러 리스크를 해결하기 위해 컴파일 타임 검증이 가능한 Hilt로의 전환을 제안하고 수행했습니다. 이를 통해 런타임 크래시를 사전에 차단하고, 안드로이드 표준 컴포넌트와의 호환성을 높여 개발 생산성을 크게 향상시켰습니다."),
+
+                Pair("Q7. 프로젝트나 목표 달성 경험",
+                    "\"레거시 시스템 위에서 쏘아 올린 신규 서비스\"\n" +
+                            "기존 송금 앱에 '국내 전용 월렛' 기능을 탑재하며 레거시 코드와의 충돌 우려가 있었으나, 철저한 모듈화를 통해 영향을 격리했습니다. 외부 업체와의 기술 미팅을 주도하고 QA 이슈를 신속히 처리하여 목표 일정 내에 성공적으로 런칭했습니다.")
+            )
+
+            for ((q, a) in qnaList) {
+                val qPara = Paragraph(q, companyFont)
+                qPara.spacingBefore = 15f
+                qPara.spacingAfter = 6f
+                document.add(qPara)
+
+                val aPara = Paragraph(a, bodyFont)
+                aPara.leading = 18f
+                aPara.spacingAfter = 10f
+                document.add(aPara)
+            }
+
+            println("PDF 생성 성공: ${File(fileName).absolutePath}")
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            println("PDF 생성 실패")
+        } finally {
+            document.close()
+        }
+    }
+
+    // ---------------- Helper Functions ----------------
+
+    fun addSectionTitle(doc: Document, title: String, font: Font) {
+        val p = Paragraph(title, font)
+        p.spacingBefore = 20f
+        p.spacingAfter = 10f
+        doc.add(p)
+        doc.add(LineSeparator(0.5f, 100f, Color.LIGHT_GRAY, Element.ALIGN_CENTER, -2f))
+    }
+
+    fun addCompanyHeader(doc: Document, name: String, period: String, nameFont: Font, periodFont: Font) {
+        val pName = Paragraph(name, nameFont)
+        pName.spacingBefore = 10f
+        doc.add(pName)
+
+        val pPeriod = Paragraph(period, periodFont)
+        pPeriod.spacingAfter = 5f
+        doc.add(pPeriod)
+    }
+
+    fun addProjectTitle(doc: Document, title: String, font: Font) {
+        val p = Paragraph(title, font)
+        p.indentationLeft = 10f
+        p.spacingBefore = 5f
+        doc.add(p)
+    }
+
+    fun addBulletedList(doc: Document, items: List<String>, font: Font) {
+        val list = com.lowagie.text.List(com.lowagie.text.List.UNORDERED)
+        list.setListSymbol("\u2022") // Bullet point
+        list.symbolIndent = 15f
+        list.indentationLeft = 20f
+
+        for (item in items) {
+            val listItem = ListItem(item, font)
+            listItem.leading = 16f
+            listItem.spacingAfter = 2f
+            list.add(listItem)
+        }
+        doc.add(list)
+    }
 }
+

@@ -210,4 +210,45 @@ class Solution {
 
         return Pair(ascending, descending)
     }
+
+    // =================================================================================
+// 12. 경우의 수 (Combinations) - 소개팅 매칭
+// =================================================================================
+    /*
+     * 문제: [남자 수, 여자 수, 총 참여 인원]이 주어질 때, 소개팅 그룹을 만들 수 있는 경우의 수 구하기
+     * 설명:
+     * - info[0]: 남자 수 (예: 5)
+     * - info[1]: 여자 수 (예: 2)
+     * - info[2]: 참여 인원 수 (예: 2 -> 남자1+여자1 페어이므로 1커플 의미)
+     * 테스트 값: [5, 2, 2] -> 10 (남자 5명중 1명 * 여자 2명중 1명)
+     * 가이드: 조합(nCr) 공식을 함수로 분리하여 구현. 페어 수 = 참여인원 / 2
+     */
+    fun calculateBlindDateCombinations(info: IntArray): Long {
+        val boys = info[0]
+        val girls = info[1]
+        val participants = info[2]
+
+        // 페어(커플) 수 = 참여 인원 / 2
+        val pairsToForm = participants / 2
+
+        // 조합 계산 함수 (n개 중에서 r개를 순서 없이 뽑는 경우의 수)
+        fun combinations(n: Int, r: Int): Long {
+            if (r < 0 || r > n) return 0
+            if (r == 0 || r == n) return 1
+
+            // nCr 계산 시 팩토리얼은 오버플로우 위험이 크므로, 반복문으로 계산
+            // nCr = n * (n-1) * ... * (n-r+1) / r!
+            var result: Long = 1
+            for (i in 0 until r) {
+                result = result * (n - i) / (i + 1)
+            }
+            return result
+        }
+
+        // 남자 중에서 필요한 인원 뽑기 x 여자 중에서 필요한 인원 뽑기
+        val boysCase = combinations(boys, pairsToForm)
+        val girlsCase = combinations(girls, pairsToForm)
+
+        return boysCase * girlsCase
+    }
 }
